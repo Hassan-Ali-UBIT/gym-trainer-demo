@@ -18,10 +18,15 @@ from .services import LoginService, RoleService, UserService, OTPService
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     full_name = serializers.CharField(required=True, write_only=True)
+    role = serializers.PrimaryKeyRelatedField(
+        queryset=Role.objects.exclude(id=RoleService.get_admin_role().id),
+        write_only=True,
+        required=True
+    )
 
     class Meta:
         model = User
-        fields = ('email', 'password', 'full_name')
+        fields = ('email', 'password', 'full_name', 'role')
 
     def create(self, validated_data):
         
@@ -29,6 +34,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password'],
             full_name=validated_data['full_name'],
+            role=validated_data['role'],
         )
 
         return user

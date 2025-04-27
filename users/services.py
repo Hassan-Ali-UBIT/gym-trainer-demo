@@ -53,14 +53,14 @@ class RoleService:
 class UserService:
 
     @staticmethod
-    def register_user(email, password, full_name):
+    def register_user(email, password, full_name, role):
         try:
             with transaction.atomic():
             # Create the user
                 user = User.objects.create_user(email=email, username=full_name, password=password, is_active=False)
                 
                 # Create UserProfile
-                UserProfile.objects.create(user=user, full_name=full_name, role=RoleService.get_user_role())
+                UserProfile.objects.create(user=user, full_name=full_name, role=role)
 
                 otp_type = "sign_up"
                 otp_code, otp_minutes = OTPService.create_otp(user, otp_type)
